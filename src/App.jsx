@@ -694,9 +694,7 @@ export default function App() {
   );
 }
 
-/* ============================================================
-   LOGIN
-   ============================================================ */
+
 function LoginScreen({ onLogin }) {
   const [step, setStep] = useState(null); // null | 'officer'
   const [dept, setDept] = useState("fire");
@@ -709,7 +707,7 @@ function LoginScreen({ onLogin }) {
           </div>
           <div>
             <div className="text-xl font-bold" style={{ color: C.text }}>Unified Industrial Approval &amp; Compliance Platform</div>
-            <div className="text-sm" style={{ color: C.textMuted }}>Government of Madhya Pradesh — Department of Industries</div>
+            <div className="text-sm" style={{ color: C.textMuted }}>Government of Maharashtra - Department of Industries</div>
           </div>
         </div>
 
@@ -740,7 +738,6 @@ function LoginScreen({ onLogin }) {
             </>
           )}
         </Card>
-        <p className="text-center text-xs mt-5" style={{ color: C.textMuted }}>Demonstration prototype — no real credentials required.</p>
       </div>
     </div>
   );
@@ -760,9 +757,7 @@ function RoleCard({ icon: Icon, title, description, onClick }) {
   );
 }
 
-/* ============================================================
-   SIDEBAR + TOPBAR
-   ============================================================ */
+
 function Sidebar({ role, officerDept, navItems, view, setView, onLogout }) {
   const roleLabel = { entrepreneur: "Entrepreneur", officer: "Department Officer", admin: "Administrator" }[role];
   return (
@@ -773,7 +768,7 @@ function Sidebar({ role, officerDept, navItems, view, setView, onLogout }) {
         </div>
         <div className="min-w-0">
           <div className="font-bold text-sm leading-tight" style={{ color: C.text }}>Industrial Approval Platform</div>
-          <div className="text-xs" style={{ color: C.textMuted }}>Govt. of Madhya Pradesh</div>
+          <div className="text-xs" style={{ color: C.textMuted }}>Govt. of Maharashtra</div>
         </div>
       </div>
       <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
@@ -867,7 +862,7 @@ function EntrepreneurDashboard({ profile, checklist, applications, setView }) {
       <>
         <PageHeader title="Welcome" description="Set up your business profile to receive a personalised approval checklist." />
         <EmptyState icon={Building2} title="No business profile yet"
-          description="Tell us about your business and the platform will generate the exact list of approvals you need — no guesswork required."
+          description="Tell us about your business and the platform will generate the exact list of approvals you need - no guesswork required."
           action={<PrimaryButton icon={Building2} onClick={() => setView("profile")}>Create Business Profile</PrimaryButton>} />
       </>
     );
