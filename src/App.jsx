@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Home, FileText, ClipboardList, Settings, Bell, LogOut, CheckCircle2,
   AlertTriangle, Clock, Upload, MessageSquare, Calendar, ShieldCheck,
@@ -32,6 +32,17 @@ const C = {
   slate: "#5A6472",
   slateBg: "#EEF1F4",
 };
+
+/* ============================================================
+   OPENING SCREEN ASSETS
+   Place these files inside: public/assets/
+   ============================================================ */
+const UDYAM_LOGO = "public/assets/udyam-logo.png";
+const INDUSTRY_IMAGES = [
+  "public/assets/industry22.jpg",
+  "public/assets/industry44.webp",
+  "public/assets/industry-3.webp",
+];
 
 /* ============================================================
    SEED DATA
@@ -450,6 +461,7 @@ function EmptyState({ icon: Icon, title, description, action }) {
    ROOT APP
    ============================================================ */
 export default function App() {
+  const [showOpening, setShowOpening] = useState(true);
   const [role, setRole] = useState(null); // 'entrepreneur' | 'officer' | 'admin'
   const [officerDept, setOfficerDept] = useState("fire");
   const [view, setView] = useState("dashboard");
@@ -629,6 +641,10 @@ export default function App() {
     setSelectedApprovalId(null);
   }
 
+  if (showOpening) {
+    return <OpeningScreen onComplete={() => setShowOpening(false)} />;
+  }
+
   if (!role) {
     return <LoginScreen onLogin={(r, dept) => { setRole(r); if (dept) setOfficerDept(dept); setView("dashboard"); }} />;
   }
@@ -695,48 +711,293 @@ export default function App() {
 }
 
 
-function LoginScreen({ onLogin }) {
-  const [step, setStep] = useState(null); // null | 'officer'
-  const [dept, setDept] = useState("fire");
+function OpeningScreen({ onComplete }) {
+  const [activeImage, setActiveImage] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const imageTimer = setInterval(() => {
+      setFade(false);
+
+      const fadeTimer = setTimeout(() => {
+        setActiveImage((current) => (current + 1) % INDUSTRY_IMAGES.length);
+        setFade(true);
+      }, 350);
+
+      return () => clearTimeout(fadeTimer);
+    }, 3000);
+
+    const openingTimer = setTimeout(() => {
+      onComplete();
+    }, 6500);
+
+    return () => {
+      clearInterval(imageTimer);
+      clearTimeout(openingTimer);
+    };
+  }, [onComplete]);
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-6" style={{ backgroundColor: C.bg, fontFamily: "system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" }}>
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-12 h-12 rounded-md flex items-center justify-center" style={{ backgroundColor: C.primary }}>
-            <Landmark color="white" size={26} />
-          </div>
-          <div>
-            <div className="text-xl font-bold" style={{ color: C.text }}> Udyam Setu - A Unified Industrial Approval &amp; Compliance Platform</div>
-            <div className="text-sm" style={{ color: C.textMuted }}>Government of Maharashtra - Department of Industries</div>
-          </div>
+    <div
+      className="fixed inset-0 overflow-hidden flex items-center justify-center"
+      style={{
+        backgroundColor: C.primaryDark,
+        fontFamily: "system-ui, -apple-system, 'Segoe UI', Arial, sans-serif",
+      }}
+    >
+      {/* Low-visibility industrial background */}
+      {INDUSTRY_IMAGES.map((image, index) => (
+        <img
+          key={image}
+          src={image}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          style={{
+            opacity: index === activeImage && fade ? 0.20 : 0,
+            filter: "saturate(0.85)",
+          }}
+        />
+      ))}
+
+      {/* Soft overlay keeps the screen professional and readable */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(10,27,43,0.78), rgba(27,58,92,0.62), rgba(255,255,255,0.18))",
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center text-center px-6">
+        <div
+          className="rounded-2xl p-3 mb-5 shadow-2xl"
+          style={{ backgroundColor: "rgba(255,255,255,0.96)" }}
+        >
+          <img
+            src={UDYAM_LOGO}
+            alt="Udyam Setu"
+            className="w-28 h-24 md:w-32 md:h-28 object-contain"
+          />
         </div>
 
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+          Udyam Setu
+        </h1>
+
+        <p className="mt-2 text-sm md:text-base text-white/90 max-w-2xl">
+          Unified Industrial Approval &amp; Compliance Platform
+        </p>
+
+        <p className="mt-1 text-xs md:text-sm text-white/70">
+          Department of Industries
+        </p>
+
+        <div className="mt-8 flex items-center gap-2">
+          {INDUSTRY_IMAGES.map((_, index) => (
+            <span
+              key={index}
+              className="h-1.5 rounded-full transition-all duration-500"
+              style={{
+                width: index === activeImage ? 28 : 8,
+                backgroundColor:
+                  index === activeImage
+                    ? "rgba(255,255,255,0.95)"
+                    : "rgba(255,255,255,0.45)",
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="mt-5 text-xs text-white/65">
+          Loading platform...
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoginScreen({ onLogin }) {
+  const [step, setStep] = useState(null);
+  const [dept, setDept] = useState("fire");
+  const [bgIndex, setBgIndex] = useState(0);
+
+  // Change background image every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgIndex((prev) => (prev + 1) % INDUSTRY_IMAGES.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      className="min-h-screen w-full relative overflow-hidden flex items-center justify-center p-6"
+      style={{
+        fontFamily:
+          "system-ui, -apple-system, 'Segoe UI', Arial, sans-serif",
+      }}
+    >
+
+      {/* ================= BACKGROUND SLIDESHOW ================= */}
+      <div className="absolute inset-0 z-0">
+
+        {INDUSTRY_IMAGES.map((image, index) => (
+          <img
+            key={image}
+            src={image}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            style={{
+              opacity: index === bgIndex ? 0.6 : 0,
+            }}
+          />
+        ))}
+
+        {/* White overlay for readability */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.72)",
+            opacity: 0.,
+          }}
+        />
+      </div>
+
+      {/* ================= LOGIN CONTENT ================= */}
+      <div className="relative z-10 w-full max-w-3xl">
+
+        {/* HEADER */}
+        <div className="flex items-center gap-3 mb-8 justify-center">
+
+  {/* Logo */}
+  <div
+    className="w-12 h-12 rounded-md flex items-center justify-center bg-white border overflow-hidden"
+    style={{ borderColor: C.border }}
+  >
+    <img
+      src={UDYAM_LOGO}
+      alt="Udyam Setu"
+      className="w-full h-full object-contain p-1"
+    />
+  </div>
+
+  {/* White Header Card */}
+  <div
+    className="bg-white/65 rounded-lg px-5 py-3 border shadow-sm"
+    style={{ borderColor: C.border }}
+  >
+    <div
+      className="text-xl font-bold"
+      style={{ color: C.text }}
+    >
+      Udyam Setu - A Unified Industrial Approval & Compliance Platform
+    </div>
+
+    <div
+      className="text-sm"
+      style={{ color: C.textMuted }}
+    >
+      Government of Maharashtra - Department of Industries
+    </div>
+  </div>
+
+</div>
+
+        {/* LOGIN CARD */}
         <Card className="p-8">
+
           {step !== "officer" ? (
             <>
-              <h1 className="text-lg font-bold mb-1" style={{ color: C.text }}>Sign in to continue</h1>
-              <p className="text-sm mb-6" style={{ color: C.textMuted }}>Select how you would like to access the platform.</p>
+              <h1
+                className="text-lg font-bold mb-1"
+                style={{ color: C.text }}
+              >
+                Sign in to continue
+              </h1>
+
+              <p
+                className="text-sm mb-6"
+                style={{ color: C.textMuted }}
+              >
+                Select how you would like to access the platform.
+              </p>
+
               <div className="grid sm:grid-cols-3 gap-4">
-                <RoleCard icon={Users} title="Entrepreneur" description="Apply for approvals and track your business's compliance." onClick={() => onLogin("entrepreneur")} />
-                <RoleCard icon={ClipboardList} title="Department Officer" description="Review and process applications for your department." onClick={() => setStep("officer")} />
-                <RoleCard icon={Settings} title="Administrator" description="Configure departments, approval rules and view audit logs." onClick={() => onLogin("admin")} />
+
+                <RoleCard
+                  icon={Users}
+                  title="Entrepreneur"
+                  description="Apply for approvals and track your business's compliance."
+                  onClick={() => onLogin("entrepreneur")}
+                />
+
+                <RoleCard
+                  icon={ClipboardList}
+                  title="Department Officer"
+                  description="Review and process applications for your department."
+                  onClick={() => setStep("officer")}
+                />
+
+                <RoleCard
+                  icon={Settings}
+                  title="Administrator"
+                  description="Configure departments, approval rules and view audit logs."
+                  onClick={() => onLogin("admin")}
+                />
+
               </div>
             </>
           ) : (
             <>
-              <h1 className="text-lg font-bold mb-1" style={{ color: C.text }}>Department Officer Sign-in</h1>
-              <p className="text-sm mb-6" style={{ color: C.textMuted }}>Select your department to view your application queue.</p>
+              <h1
+                className="text-lg font-bold mb-1"
+                style={{ color: C.text }}
+              >
+                Department Officer Sign-in
+              </h1>
+
+              <p
+                className="text-sm mb-6"
+                style={{ color: C.textMuted }}
+              >
+                Select your department to view your application queue.
+              </p>
+
               <Field label="Department">
-                <select className={inputCls} style={inputStyle} value={dept} onChange={(e) => setDept(e.target.value)}>
-                  {DEPARTMENTS.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                <select
+                  className={inputCls}
+                  style={inputStyle}
+                  value={dept}
+                  onChange={(e) => setDept(e.target.value)}
+                >
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                    </option>
+                  ))}
                 </select>
               </Field>
+
               <div className="flex gap-3 mt-2">
-                <SecondaryButton onClick={() => setStep(null)} icon={ChevronLeft}>Back</SecondaryButton>
-                <PrimaryButton onClick={() => onLogin("officer", dept)}>Sign in</PrimaryButton>
+
+                <SecondaryButton
+                  onClick={() => setStep(null)}
+                  icon={ChevronLeft}
+                >
+                  Back
+                </SecondaryButton>
+
+                <PrimaryButton
+                  onClick={() => onLogin("officer", dept)}
+                >
+                  Sign in
+                </PrimaryButton>
+
               </div>
             </>
           )}
+
         </Card>
       </div>
     </div>
@@ -763,8 +1024,8 @@ function Sidebar({ role, officerDept, navItems, view, setView, onLogout }) {
   return (
     <aside className="w-64 flex-shrink-0 border-r flex flex-col" style={{ backgroundColor: C.surface, borderColor: C.border }}>
       <div className="p-5 border-b flex items-center gap-2.5" style={{ borderColor: C.border }}>
-        <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: C.primary }}>
-          <Landmark color="white" size={18} />
+        <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden bg-white border" style={{ borderColor: C.border }}>
+          <img src={UDYAM_LOGO} alt="Udyam Setu logo" className="w-full h-full object-contain" />
         </div>
         <div className="min-w-0">
           <div className="font-bold text-sm leading-tight" style={{ color: C.text }}>Udyam Setu</div>
