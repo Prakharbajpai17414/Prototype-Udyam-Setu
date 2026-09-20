@@ -37,11 +37,11 @@ const C = {
    OPENING SCREEN ASSETS
    Place these files inside: public/assets/
    ============================================================ */
-const UDYAM_LOGO = "public/assets/udyam-logo.png";
+const UDYAM_LOGO = "/assets/udyam-logo.png";
 const INDUSTRY_IMAGES = [
-  "public/assets/industry22.jpg",
-  "public/assets/industry44.webp",
-  "public/assets/industry-3.webp",
+  "/assets/industry22.jpg",
+  "/assets/industry44.webp",
+  "/assets/industry-3.webp",
 ];
 
 /* ============================================================
