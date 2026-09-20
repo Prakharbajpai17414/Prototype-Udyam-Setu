@@ -706,7 +706,7 @@ function LoginScreen({ onLogin }) {
             <Landmark color="white" size={26} />
           </div>
           <div>
-            <div className="text-xl font-bold" style={{ color: C.text }}>Unified Industrial Approval &amp; Compliance Platform</div>
+            <div className="text-xl font-bold" style={{ color: C.text }}> Udyam Setu - A Unified Industrial Approval &amp; Compliance Platform</div>
             <div className="text-sm" style={{ color: C.textMuted }}>Government of Maharashtra - Department of Industries</div>
           </div>
         </div>
@@ -767,7 +767,7 @@ function Sidebar({ role, officerDept, navItems, view, setView, onLogout }) {
           <Landmark color="white" size={18} />
         </div>
         <div className="min-w-0">
-          <div className="font-bold text-sm leading-tight" style={{ color: C.text }}>Industrial Approval Platform</div>
+          <div className="font-bold text-sm leading-tight" style={{ color: C.text }}>Udyam Setu</div>
           <div className="text-xs" style={{ color: C.textMuted }}>Govt. of Maharashtra</div>
         </div>
       </div>
